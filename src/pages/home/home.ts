@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NavController } from 'ionic-angular';
+import { NavController, Platform } from 'ionic-angular';
 import { File, Entry } from '@ionic-native/file';
 
 @Component({
@@ -16,6 +16,7 @@ export class HomePage {
 
   constructor(
     public navCtrl: NavController,
+    private platform: Platform,
     private file: File
   ) { }
 
@@ -24,11 +25,13 @@ export class HomePage {
     this.dataDirectory = this.file.dataDirectory;
     this.applicationDirectory = this.file.applicationDirectory;
 
-    this.file.createFile(
-      this.file.dataDirectory,
-      fileName,
-      true
-    ).then((entry: Entry) => {
+    this.platform.ready().then(_ => {
+      return this.file.createFile(
+        this.file.dataDirectory,
+        fileName,
+        true
+      )
+    }).then((entry: Entry) => {
       this.createdFile = entry.nativeURL;
       return this.file.copyFile(
         this.file.dataDirectory,
